@@ -1,0 +1,31 @@
+---
+vars:
+  grouppolicy: CSR_GP
+  cli:
+    host: vpnfirewalls
+    username: setusername
+    password: setpassword
+    authorize: yes
+    auth_pass: setenable
+
+vars_prompt:
+
+    - name: vpnusername
+      prompt: "What is VPN username?"
+      private: no
+
+    - name: vpnpassword
+      prompt: "What is the password?"
+
+tasks:
+
+    -name: add VPN user
+     asa_config:
+        lines:
+         - username {{vpnusername}} password {{vpnpassword}} privilege 1
+         - username {{vpnusername}} attributes
+         - vpn-group-policy {{grouppolicy}}
+         - vpn-tunnel-protocol ssl-client
+         - password-storage disable
+         - service-type remote-access
+        provider: "{{ cli }}"
